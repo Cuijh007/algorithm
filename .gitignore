@@ -1,0 +1,16 @@
+*.o
+*.elf
+*.exe
+*~
+*.map
+*.lst
+*.axf
+*.bin
+*.dbo
+*.dla
+*.dnm
+*.srec
+.depend
+*.wrn
+*.rom
+*.a

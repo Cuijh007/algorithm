@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "stdint.h": "c",
+        "functional": "c",
+        "intent_process.h": "c",
+        "mid_npu.h": "c",
+        "nn_file_struct.h": "c"
+    }
+}

@@ -1,0 +1,172 @@
+######################################################################## 
+# file:		makefile.rule.environment
+#=====================================================================
+# Description:	
+#	Common makefile definitions
+# 	root level makefile that is used by all the 
+# 	lowlevel makefiles to resolve architecture specific and path 
+# 	dependencies. 
+#=====================================================================
+# version:	v1.0
+# date:		2018/4/17
+# create by:	xjl
+######################################################################## 
+
+BUILD_ROOT =$(FW_PROJ_ROOT)
+
+
+ARLIB	   =algorithm
+
+LPC_SILENT =0
+
+ECHO		= $(TOOLS_PATH)echo
+ifeq ($(LPC_SILENT), 1)
+	MAKE    = $(TOOLS_PATH)make -s
+else	
+	MAKE    = $(TOOLS_PATH)make
+endif
+#MKDEPS		= $(TOOLS_PATH)makedepend
+MKDEPS		= $(TOOLS_PATH)$(CC) -M
+RANLIB		= ranlib
+MV		= $(TOOLS_PATH)mv -f
+CP		= $(TOOLS_PATH)cp
+CD		= $(TOOLS_PATH)cd
+LS		= dir
+MKDIR		= $(TOOLS_PATH)mkdir -p
+RM		= $(TOOLS_PATH)rm -f
+RMREC		= $(TOOLS_PATH)rm -f -r
+RMDIR		= $(TOOLS_PATH)rm -f -r
+
+ASTYLE		= astyle --options=$(BUILD_ROOT)/build/tools/astyle.cfg 
+
+########################################################################
+#
+# ELF to another format type file
+#
+########################################################################
+
+ifeq ($(DEBUG_MODE),1)
+
+# In order to generate the application code with DEBUG function
+# All debug information will be remained (Un-strip)
+
+ELFSTRIP 	= $(OBJCOPY) -O elf32-littlearm
+ELFTOBIN	= $(OBJCOPY) -I elf32-little -O binary 
+ELFTOREC 	= $(OBJCOPY) -O srec 
+ELFTOHEX	= $(OBJCOPY) -O ihex 
+BINTOELF	= $(OBJCOPY) -I binary -O elf32-little 
+
+else
+
+# In order to generate the final application code without DEBUG
+# All debug information will be remove (strip)
+
+ELFSTRIP 	=arm-none-eabi-objcopy -O elf32-littlearm --strip-all 
+ELFTOBIN	= $(OBJCOPY) -I elf32-little -O binary --strip-debug --strip-unneeded 
+ELFTOREC 	= $(OBJCOPY) -O srec --strip-debug 
+ELFTOHEX	= $(OBJCOPY) -O ihex --strip-debug 
+BINTOELF	= $(OBJCOPY) -I elf32-little -O elf32-little --strip-all 
+
+endif
+
+ELFTOBIN	+= --verbose 
+
+
+
+########################################################################
+#
+# ROOT LOCATION FOR (ARLIB) LIBRARIES
+#
+########################################################################
+
+ARLIB_LIB_DIR =$(BUILD_ROOT)/$(ARLIB)/library
+
+########################################################################
+# 
+# (PRODUCT CUSTOM) SOURCE AND HEADERS LOCATIONS
+# 
+########################################################################
+
+#PRODUCT_DIR   =$(BUILD_ROOT)/custom/$(PRODUCT)
+PRODUCT_DIR   =$(BUILD_ROOT)/app/$(PRODUCT)
+PRODUCT_SRC_DIR =$(PRODUCT_DIR)
+PRODUCT_INC_DIR =$(PRODUCT_DIR)
+
+
+########################################################################
+# 
+# (ARLIB) SOURCE AND HEADERS LOCATIONS
+# 
+########################################################################
+
+ARLIB_DIR     =$(BUILD_ROOT)/$(ARLIB)
+ARLIB_SRC_DIR =$(ARLIB_DIR)
+ARLIB_INC_DIR =$(ARLIB_DIR)
+
+########################################################################
+# 
+# (CMCORE) SOURCE AND HEADERS LOCATIONS
+# 
+########################################################################
+
+#CMCORE_DIR     =$(BUILD_ROOT)/core/CMSIS/Include
+#CMCORE_DIR     =$(BUILD_ROOT)/core/CMSIS/Core/Include
+#CMCORE_SRC_DIR =$(CMCORE_DIR)
+#CMCORE_INC_DIR =$(CMCORE_DIR)
+
+########################################################################
+# 
+# (DEVICE) HEADERS LOCATIONS
+# 
+########################################################################
+
+DEVICE_DIR     =$(BUILD_ROOT)/core/Device/$(MANUFACTURE)/$(DEVICE)/Source
+DEVICE_INC_DIR =$(BUILD_ROOT)/core/Device/$(MANUFACTURE)/$(DEVICE)/Include
+
+########################################################################
+#
+# TOOL SPECIFIC PREFIX AND POSTFIX
+# 
+########################################################################
+
+ifeq ($(TOOL), arm)
+  PREFIX =
+else
+  ifeq ($(LIB), true)
+    PREFIX =
+  else
+    ifeq ($(TOOL), gnu)
+      PREFIX =
+    else
+      PREFIX =
+    endif 
+  endif
+endif
+
+POSTFIX  =$(TOOL)
+
+########################################################################
+#
+# LIBRARY NAMES
+# 
+########################################################################
+
+ARLIB_ARCHIVE_NAME  =$(PREFIX)$(ARLIB)$(DEVICE)$(POSTFIX)
+
+ifeq ($(TOOL), ghs)
+  ARLIB_ARCHIVE  	  =lib$(ARLIB_ARCHIVE_NAME).a
+else
+  ifeq ($(TOOL), gnu)
+    ARLIB_ARCHIVE  	  =lib$(ARLIB_ARCHIVE_NAME).a
+  else
+    ARLIB_ARCHIVE  	  =$(ARLIB_ARCHIVE_NAME).a
+  endif
+endif
+
+########################################################################
+#
+# LIBRARIES WITH COMPLETE LOCATION PATH
+# 
+########################################################################
+
+TARGET_ARLIB_LIB =$(ARLIB_LIB_DIR)/$(ARLIB_ARCHIVE)

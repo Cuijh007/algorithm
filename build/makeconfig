@@ -1,0 +1,29 @@
+########################################################################
+# file:		makeconfig
+#=====================================================================
+# Description:	
+#		Configuration file for "make" session. 
+#=====================================================================
+# version:	v1.0
+# date:		12 Nov 2014
+# create by:	xjl
+######################################################################## 
+#
+########################################################################
+#
+# Note: 
+# Add path of "tools" directory (in this folder) 
+# to the HEAD of SYSTEM PATH variable
+#
+########################################################################
+
+DEVICE			=BACH
+MANUFACTURE		=INTEN
+TOOL 			=gnu
+DEBUG_MODE		=1
+TOOLS_PATH 		=
+
+GNU_INSTALL_ROOT	=
+GNU_VERSION	    	=9.2.0
+IAR_INSTALL_ROOT	=
+KEIL_INSTALL_ROOT	=
